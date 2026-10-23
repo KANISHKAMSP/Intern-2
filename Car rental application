@@ -1,0 +1,143 @@
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Car {
+    int id;
+    String name;
+    double pricePerDay;
+    boolean available;
+
+    Car(int id, String name, double pricePerDay) {
+        this.id = id;
+        this.name = name;
+        this.pricePerDay = pricePerDay;
+        this.available = true;
+    }
+
+    void display() {
+        System.out.println(
+            id + ". " + name +
+            " | Rs." + pricePerDay +
+            " per day | " +
+            (available ? "Available" : "Rented")
+        );
+    }
+}
+
+public class Main {
+    static ArrayList<Car> cars = new ArrayList<>();
+    static Scanner sc = new Scanner(System.in);
+
+    public static void main(String[] args) {
+
+        cars.add(new Car(1, "Maruti Swift", 1500));
+        cars.add(new Car(2, "Hyundai i20", 2000));
+        cars.add(new Car(3, "Toyota Innova", 3500));
+        cars.add(new Car(4, "Tata Nexon", 2500));
+
+        while (true) {
+            System.out.println("\n===== CAR RENTAL SYSTEM =====");
+            System.out.println("1. View Cars");
+            System.out.println("2. Rent a Car");
+            System.out.println("3. Return a Car");
+            System.out.println("4. Exit");
+            System.out.print("Enter your choice: ");
+
+            int choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    viewCars();
+                    break;
+
+                case 2:
+                    rentCar();
+                    break;
+
+                case 3:
+                    returnCar();
+                    break;
+
+                case 4:
+                    System.out.println("Thank you for using Car Rental System!");
+                    sc.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid choice. Try again.");
+            }
+        }
+    }
+
+    static void viewCars() {
+        System.out.println("\n----- CAR LIST -----");
+        for (Car car : cars) {
+            car.display();
+        }
+    }
+
+    static void rentCar() {
+        viewCars();
+
+        System.out.print("\nEnter Car ID to rent: ");
+        int id = sc.nextInt();
+
+        Car selected = findCar(id);
+
+        if (selected == null) {
+            System.out.println("Invalid Car ID.");
+            return;
+        }
+
+        if (!selected.available) {
+            System.out.println("Sorry, this car is already rented.");
+            return;
+        }
+
+        System.out.print("Enter number of rental days: ");
+        int days = sc.nextInt();
+
+        if (days <= 0) {
+            System.out.println("Rental days must be greater than zero.");
+            return;
+        }
+
+        double total = selected.pricePerDay * days;
+        selected.available = false;
+
+        System.out.println("\n----- RENTAL DETAILS -----");
+        System.out.println("Car: " + selected.name);
+        System.out.println("Rental Days: " + days);
+        System.out.println("Price Per Day: Rs." + selected.pricePerDay);
+        System.out.println("Total Amount: Rs." + total);
+        System.out.println("Car rented successfully!");
+    }
+
+    static void returnCar() {
+        System.out.print("\nEnter Car ID to return: ");
+        int id = sc.nextInt();
+
+        Car selected = findCar(id);
+
+        if (selected == null) {
+            System.out.println("Invalid Car ID.");
+        } else if (selected.available) {
+            System.out.println("This car has not been rented.");
+        } else {
+            selected.available = true;
+            System.out.println(
+                selected.name + " returned successfully!"
+            );
+        }
+    }
+
+    static Car findCar(int id) {
+        for (Car car : cars) {
+            if (car.id == id) {
+                return car;
+            }
+        }
+        return null;
+    }
+}
